@@ -16,7 +16,9 @@ function ($httpProvider, jwtInterceptorProvider) {
     'jwtHelper',
     'auth',
     'pdAuth',
-  function(store, jwtHelper, auth, pdAuth) {
+    'config',
+  function(store, jwtHelper, auth, pdAuth, config) {
+    if (config.url.indexOf('.html') !== -1) return true;
     if (auth.idToken && jwtHelper.isTokenExpired(auth.idToken)) {
       return pdAuth.refresh();
     } else if (auth.idToken) {
