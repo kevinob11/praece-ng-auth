@@ -6,6 +6,7 @@ auth0-angular
 a0-angular-storage
 angular-jwt
 angular-cookies
+auth0-lock
 ```
 
 Add the `pr.auth` module dependency to your angular app definition (index.js file) and configure it by calling the init method of the authProvider. Use your own domain and clientID (provided by auth0).
