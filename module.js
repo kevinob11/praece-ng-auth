@@ -63,5 +63,5 @@ function (pdAuth, auth, $rootScope, $state, store, jwtHelper) {
     }
   });
 
-  $rootScope.auth = pdAuth;
+  $rootScope.auth = auth;
 }]);
