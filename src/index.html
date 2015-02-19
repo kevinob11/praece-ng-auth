@@ -1,0 +1,30 @@
+<!doctype html>
+<html class="no-js" ng-app="demo">
+  <head>
+    <meta charset="utf-8">
+    <title>Praece ngAuth</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- <link rel="stylesheet" href="styles/app.css" /> -->
+  </head>
+  <body>
+
+    <div ui-view></div>
+
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/ui-router/release/angular-ui-router.js"></script>
+    <script src="../bower_components/a0-angular-storage/dist/angular-storage.js"></script>
+    <script src="../bower_components/angular-jwt/dist/angular-jwt.js"></script>
+    <script src="../bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="../bower_components/auth0.js/build/auth0.js"></script>
+    <script src="../bower_components/auth0-angular/build/auth0-angular.js"></script>
+    <script src="../bower_components/auth0-lock/build/auth0-lock.js"></script>
+    <script src="app.js"></script>
+
+    <!-- build:js praece-ng-auth.js -->
+    <script src="module.js"></script>
+    <script src="services/auth.js"></script>
+    <!-- endbuild -->
+
+  </body>
+</html>

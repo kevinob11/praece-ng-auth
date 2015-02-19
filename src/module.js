@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pr.auth', ['auth0', 'angular-storage', 'angular-jwt']);
+angular.module('pr.auth', ['ui.router', 'auth0', 'angular-storage', 'angular-jwt']);
 
 /**
 * config() registers a function to 
@@ -15,12 +15,12 @@ function ($httpProvider, jwtInterceptorProvider) {
     'store',
     'jwtHelper',
     'auth',
-    'pdAuth',
+    'authSrvc',
     'config',
-  function(store, jwtHelper, auth, pdAuth, config) {
+  function(store, jwtHelper, auth, authSrvc, config) {
     if (config.url.indexOf('.html') !== -1) return true;
     if (auth.idToken && jwtHelper.isTokenExpired(auth.idToken)) {
-      return pdAuth.refresh();
+      return authSrvc.refresh();
     } else if (auth.idToken) {
       return auth.idToken;
     }
@@ -40,26 +40,26 @@ function ($httpProvider, jwtInterceptorProvider) {
 * asks the user to log in.   
 */
 angular.module('pr.auth').run( [
-  'pdAuth',
+  'authSrvc',
   'auth',
   '$rootScope',
   '$state',
   'store',
   'jwtHelper',
-function (pdAuth, auth, $rootScope, $state, store, jwtHelper) {
+function (authSrvc, auth, $rootScope, $state, store, jwtHelper) {
   $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-    var token = pdAuth.load();
+    var token = authSrvc.load();
 
     //if we have a token and the token has expired
     //refresh the token
     if (token && jwtHelper.isTokenExpired(token)) {
       event.preventDefault();
-      pdAuth.refresh().then(function() {
+      authSrvc.refresh().then(function() {
         $state.go(toState.name, toParams);
       });
     } else if (!auth.isAuthenticated) {
       event.preventDefault();
-      pdAuth.login(toState, toParams);
+      authSrvc.login(toState, toParams);
     }
   });
 

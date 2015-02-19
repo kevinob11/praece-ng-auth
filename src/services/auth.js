@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pr.auth').service('pdAuth', [
+angular.module('pr.auth').service('authSrvc', [
   'auth',
   'store',
   'jwtHelper',
