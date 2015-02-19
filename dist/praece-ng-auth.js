@@ -91,6 +91,7 @@ function (auth, store, jwtHelper, $state, $q) {
       toParams = toParams || {};
       auth.signin(_this.settings, function() {
         _this.save();
+
         if(toState) {
           $state.go(toState.name, toParams);
         }  
@@ -121,7 +122,10 @@ function (auth, store, jwtHelper, $state, $q) {
         var token = store.get('token');
 
         if (token && !jwtHelper.isTokenExpired(token)) {
-          auth.authenticate(store.get('profile'), token, null, null, store.get('refreshToken'));
+          auth.authenticate(store.get('profile'), token, null, null, store.get('refreshToken'))
+            ['catch'](function() {
+              _this.logout();
+            });
         }
         return token;
       }
@@ -142,28 +146,27 @@ function (auth, store, jwtHelper, $state, $q) {
       var refreshToken = auth.refreshToken || store.get('refreshToken');
       var _this = this;
 
-      if (refreshPromise) {
-        return refreshPromise;
-      } else {
-        auth.refreshIdToken(refreshToken).then(function(idToken) {
-          auth.authenticate(store.get('profile'), idToken, null, null, refreshToken)
+      if (!refreshPromise) {
+        auth.refreshIdToken(refreshToken)
+          .then(function(idToken) {
+            return auth.authenticate(store.get('profile'), idToken, null, null, refreshToken);
+          })
           .then(function() {
             _this.save();
-            deferred.resolve(idToken);
-          }, function(error) {
+            deferred.resolve(auth.idToken);
+          })
+          ['catch'](function(error) {
             console.log(error);
             _this.logout();
+          })
+          .finally(function() {
+            refreshPromise = null;
           });
-        }, function(error) {
-          console.log(error);
-          _this.logout();
-        })
-        .finally(function() {
-          refreshPromise = null;
-        });
+
         refreshPromise = deferred.promise;
-        return deferred.promise;
       }
+
+      return refreshPromise;
     },
 
     /**
@@ -175,7 +178,7 @@ function (auth, store, jwtHelper, $state, $q) {
       store.remove('refreshToken');
       store.remove('profile');
 
-      this.login('home');
+      this.login();
     },
 
     /**
