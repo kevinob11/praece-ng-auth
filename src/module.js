@@ -63,5 +63,6 @@ function (authSrvc, auth, $rootScope, $state, store, jwtHelper) {
     }
   });
 
+  $rootScope.authSrvc = authSrvc;
   $rootScope.auth = auth;
 }]);

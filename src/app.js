@@ -10,8 +10,6 @@ demo.controller('demoCtrl', [
 function(authSrvc, auth, jwtHelper){
   var demo = this;
 
-  console.log(jwtHelper.decodeToken(auth.idToken));
-
   demo.logout = function() {
     authSrvc.logout()
   };
