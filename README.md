@@ -1,7 +1,6 @@
 # Installation
 Run `bower install --save git@github.com:praece/ng-auth.git#master`<br>
 Add `pr.auth` as a dependency to your app
-```
 
 Include all javascript files:
 ```
@@ -14,8 +13,10 @@ Include all javascript files:
 <script src="../bower_components/auth0-angular/build/auth0-angular.js"></script>
 <script src="../bower_components/auth0-lock/build/auth0-lock.js"></script>
 ```
+*The last three files (auth0, auth0-angular, auth0-lock) cannot be concatenated with all other js, if concatenated separately into their own file it should be work fine*
 
-# Example - adding the module dependency and setting the configuration up in your angular app.
+# Example 
+Adding the module dependency and setting the configuration up in your angular app.
 ```js
 angular.module('pr.auth').config( [
   'authProvider',
