@@ -9,7 +9,10 @@ var rename      = require("gulp-rename");
 gulp.task('browser-sync', function() {
   browserSync({
     server: {
-      baseDir: "./"
+      baseDir: "src",
+      routes: {
+        "/bower_components": "bower_components"
+      }
     }
   });
 });
@@ -20,7 +23,7 @@ gulp.task('reload', function() {
 
 gulp.task('styles', function() {
 	return gulp.src('src/**/*.scss')
-		.pipe(sass({style: 'expanded', includePaths: ['bower_components/bootstrap-sass/assets/stylesheets']}))
+		.pipe(sass({style: 'expanded'}))
 		.pipe(gulp.dest('src/'));
 });
 
