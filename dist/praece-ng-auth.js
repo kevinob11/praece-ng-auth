@@ -9,8 +9,9 @@ angular.module('pr.auth', ['ui.router', 'auth0', 'angular-storage', 'angular-jwt
 */
 angular.module('pr.auth').config( [
   '$httpProvider',
+  '$stateProvider',
   'jwtInterceptorProvider',
-function ($httpProvider, jwtInterceptorProvider) {
+function ($httpProvider, $stateProvider, jwtInterceptorProvider) {
   jwtInterceptorProvider.tokenGetter = [
     'store',
     'jwtHelper',
@@ -29,6 +30,12 @@ function ($httpProvider, jwtInterceptorProvider) {
   }];
 
   $httpProvider.interceptors.push('jwtInterceptor');
+
+  $stateProvider
+    .state('login', {
+      url: '/login',
+      template: '<div></div>'
+    });
 }]);
 
 /**
@@ -47,26 +54,36 @@ angular.module('pr.auth').run( [
   'store',
   'jwtHelper',
 function (authSrvc, auth, $rootScope, $state, store, jwtHelper) {
-  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-    var token = authSrvc.load();
+  var redirect = {state: {}, params: {}};
 
-    //if we have a token and the token has expired
-    //refresh the token
-    if (token && jwtHelper.isTokenExpired(token)) {
-      event.preventDefault();
-      authSrvc.refresh().then(function() {
-        $state.go(toState.name, toParams);
-      });
-    } else if (!auth.isAuthenticated) {
-      event.preventDefault();
-      authSrvc.login(toState, toParams);
-    }
+  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+      var token = authSrvc.load();
+      var refresh = store.get('refreshToken');
+
+      if (!auth.isAuthenticated) {
+        if (toState.name !== 'login') {
+          redirect = {
+            state: toState,
+            params: toParams
+          };
+          event.preventDefault();
+          return $state.go('login');
+        }
+
+        if (token && refresh && jwtHelper.isTokenExpired(token)) {
+          authSrvc.refresh().then(function() {
+            $state.go(redirect.state, redirect.params);
+          });
+          return true;
+        }
+
+        authSrvc.login(redirect.state, redirect.params);
+      }
   });
 
   $rootScope.authSrvc = authSrvc;
   $rootScope.auth = auth;
 }]);
-
 'use strict';
 
 angular.module('pr.auth').service('authSrvc', [
@@ -88,13 +105,15 @@ function (auth, store, jwtHelper, $state, $q) {
     */
     login: function(toState, toParams) {
       var _this = this;
-      toParams = toParams || {};
+
       auth.signin(_this.settings, function() {
         _this.save();
 
-        if(toState) {
+        if (toState.name) {
           $state.go(toState.name, toParams);
-        }  
+        } else {
+          $location.url('/');
+        }
       }, function(error) {
         console.log(error);
       });
@@ -109,6 +128,7 @@ function (auth, store, jwtHelper, $state, $q) {
       store.set('token', auth.idToken);
       store.set('refreshToken', auth.refreshToken);
       store.set('profile', auth.profile);
+      auth.signout();
     },
 
     /**

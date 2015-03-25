@@ -19,13 +19,15 @@ function (auth, store, jwtHelper, $state, $q) {
     */
     login: function(toState, toParams) {
       var _this = this;
-      toParams = toParams || {};
+
       auth.signin(_this.settings, function() {
         _this.save();
 
-        if(toState) {
+        if (toState.name) {
           $state.go(toState.name, toParams);
-        }  
+        } else {
+          $location.url('/');
+        }
       }, function(error) {
         console.log(error);
       });
@@ -40,6 +42,7 @@ function (auth, store, jwtHelper, $state, $q) {
       store.set('token', auth.idToken);
       store.set('refreshToken', auth.refreshToken);
       store.set('profile', auth.profile);
+      auth.signout();
     },
 
     /**
