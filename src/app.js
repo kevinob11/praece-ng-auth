@@ -21,7 +21,6 @@ demo.config([
   'authProvider',
 
 function ($stateProvider, $urlRouterProvider, authProvider) {
-  //TODO This location does not currently exist. Need to choose/create a home page and set it here
   $stateProvider
     .state('home', {
       url: '/',
@@ -36,3 +35,13 @@ function ($stateProvider, $urlRouterProvider, authProvider) {
     clientID: 'IUFBVNSyPtMV4qAG2ZOQs5GwUf9099Fc'
   });
 }]);
+
+
+demo.run([
+  'authSrvc',
+
+function(authSrvc) {
+  authSrvc.setIcon('http://praece.com/images/logos/praece_dark.png');
+}
+
+]);
