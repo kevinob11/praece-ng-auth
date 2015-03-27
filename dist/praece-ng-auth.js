@@ -27,7 +27,8 @@ function ($httpProvider, $stateProvider, jwtInterceptorProvider) {
     .state('login', {
       url: '/login',
       template: '<div></div>',
-      controller: 'loginCtrl'
+      controller: 'loginCtrl',
+      params: {state: null, params: null}
     });
 }]);
 
