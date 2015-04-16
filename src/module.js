@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pr.auth', ['ui.router', 'auth0', 'angular-storage', 'angular-jwt']);
+angular.module('pr.auth', ['ui.router', 'auth0', 'ngStorage', 'angular-jwt']);
 
 /**
  * config() registers a function to 

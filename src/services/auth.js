@@ -2,12 +2,12 @@
 
 angular.module('pr.auth').service('authSrvc', [
   'auth',
-  'store',
+  '$localStorage',
   'jwtHelper',
   '$state',
   '$q',
   '$location',
-function (auth, store, jwtHelper, $state, $q, $location) {
+function (auth, $localStorage, jwtHelper, $state, $q, $location) {
   var refreshPromise;
   var authSrvc = this;
   var settings = {
@@ -34,8 +34,8 @@ function (auth, store, jwtHelper, $state, $q, $location) {
    * @return {object} promise
    */
   authSrvc.load = function() {
-    var token = store.get('token');
-    var profile = store.get('profile');
+    var token = $localStorage.authToken;
+    var profile = $localStorage.authProfile;
 
     if (token && !jwtHelper.isTokenExpired(token)) {
       return auth.authenticate(profile, token);
@@ -68,8 +68,8 @@ function (auth, store, jwtHelper, $state, $q, $location) {
    * retreived if the user refreshes the page.
    */
   authSrvc.store = function() {
-    store.set('token', auth.idToken);
-    store.set('profile', auth.profile);
+    $localStorage.authToken = auth.idToken;
+    $localStorage.authProfile = auth.profile;
   };
 
   /**
@@ -77,8 +77,8 @@ function (auth, store, jwtHelper, $state, $q, $location) {
    * the store, and returns the user to the login() state.
    */
   authSrvc.logout = function() {
-    store.remove('token');
-    store.remove('profile');
+    delete $localStorage.authToken;
+    delete $localStorage.authProfile;
     auth.signout();
     $state.go('login');
   };
@@ -90,7 +90,7 @@ function (auth, store, jwtHelper, $state, $q, $location) {
   authSrvc.refresh = function() {
     auth.renewIdToken(auth.idToken)
       .then(function(token) {
-        store.set('token', token);
+        $localStorage.authToken = token;
         authSrvc.load();
       })
       ['catch'](function() {
