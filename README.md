@@ -6,7 +6,7 @@ Include all javascript files:
 ```
 <script src="../bower_components/praece-ng-auth/dist/praece-ng-auth.js"></script>
 <script src="../bower_components/ui-router/release/angular-ui-router.js"></script>
-<script src="../bower_components/a0-angular-storage/dist/angular-storage.js"></script>
+<script src="../bower_components/ngstorage/ngStorage.js"></script>
 <script src="../bower_components/angular-jwt/dist/angular-jwt.js"></script>
 <script src="../bower_components/angular-cookies/angular-cookies.js"></script>
 <script src="../bower_components/auth0.js/build/auth0.js"></script>
@@ -18,12 +18,18 @@ Include all javascript files:
 # Example 
 Adding the module dependency and setting the configuration up in your angular app.
 ```js
-angular.module('pr.auth').config( [
+angular.module('pr.auth')
+.config( [
   'authProvider',
 function (authProvider) {
     authProvider.init({
       domain: 'your-domain.auth0.com',
       clientID: 'bjrT2sObtN7szbJfnEniLjkXOPmFDtxZ'
     });
+}])
+.run( [
+	'authSrvc',
+function (authSrvc) {
+	authSrvc.setIcon('/assets/images/logo.jpg');
 }]);
 ```
