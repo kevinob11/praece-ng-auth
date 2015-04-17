@@ -56,10 +56,6 @@ function (authSrvc, auth, $rootScope, $state) {
     $state.go('login', {state: $state.current, params: $state.params});
   });
 
-  $rootScope.$on('authSuccess', function() {
-    console.log('We\'ve successfully logged in, now load your current user!');
-  });
-
   $rootScope.authSrvc = authSrvc;
   $rootScope.auth = auth;
 }]);
