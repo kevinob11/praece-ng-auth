@@ -40,12 +40,13 @@ function ($stateProvider, $urlRouterProvider, authProvider) {
 demo.run([
   'authSrvc',
   '$rootScope',
+  'auth',
 
-function(authSrvc, $rootScope) {
+function(authSrvc, $rootScope, auth) {
   authSrvc.setIcon('http://praece.com/images/logos/praece_dark.png');
 
   $rootScope.$on('authSuccess', function() {
-    console.log('We\'ve successfully logged in, now load your current user!');
+    console.log(auth.profile);
   });
 }
 

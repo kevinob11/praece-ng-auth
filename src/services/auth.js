@@ -39,8 +39,10 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location, $rootScope) {
     var profile = $localStorage.authProfile;
 
     if (token && !jwtHelper.isTokenExpired(token)) {
-      $rootScope.$broadcast('authSuccess');
-      return auth.authenticate(profile, token);
+      return auth.authenticate(profile, token)
+        .then(function() {
+          $rootScope.$broadcast('authSuccess');
+        });
     }
 
     return $q.reject('Token is empty or expired.');
@@ -92,8 +94,7 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location, $rootScope) {
     auth.renewIdToken(auth.idToken)
       .then(function(token) {
         $localStorage.authToken = token;
-        var profile = $localStorage.authProfile;
-        return auth.authenticate(profile, token);
+        return auth.authenticate($localStorage.authProfile, token);
       })
       ['catch'](function() {
         authSrvc.logout();
