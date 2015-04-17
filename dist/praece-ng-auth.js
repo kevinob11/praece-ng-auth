@@ -53,7 +53,11 @@ function (authSrvc, auth, $rootScope, $state) {
   });
 
   $rootScope.$on('unauthenticated', function() {
+    $state.go('login', {state: $state.current, params: $state.params});
+  });
 
+  $rootScope.$on('authSuccess', function() {
+    console.log('We\'ve successfully logged in, now load your current user!');
   });
 
   $rootScope.authSrvc = authSrvc;
@@ -68,7 +72,8 @@ angular.module('pr.auth').service('authSrvc', [
   '$state',
   '$q',
   '$location',
-function (auth, $localStorage, jwtHelper, $state, $q, $location) {
+  '$rootScope',
+function (auth, $localStorage, jwtHelper, $state, $q, $location, $rootScope) {
   var refreshPromise;
   var authSrvc = this;
   var settings = {
@@ -99,6 +104,7 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location) {
     var profile = $localStorage.authProfile;
 
     if (token && !jwtHelper.isTokenExpired(token)) {
+      $rootScope.$broadcast('authSuccess');
       return auth.authenticate(profile, token);
     }
 
@@ -113,12 +119,11 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location) {
   authSrvc.login = function(toState, toParams) {
     auth.signin(settings, function() {
       authSrvc.store();
+      $rootScope.$broadcast('authSuccess');
 
-      if (toState.name) {
-        $state.go(toState.name, toParams);
-      } else {
-        $location.url('/');
-      }
+      if (toState.name) return $state.go(toState.name, toParams);
+
+      $location.url('/');
     }, function(error) {
       console.log(error);
     });
@@ -152,7 +157,8 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location) {
     auth.renewIdToken(auth.idToken)
       .then(function(token) {
         $localStorage.authToken = token;
-        authSrvc.load();
+        var profile = $localStorage.authProfile;
+        return auth.authenticate(profile, token);
       })
       ['catch'](function() {
         authSrvc.logout();
