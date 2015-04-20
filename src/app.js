@@ -44,10 +44,6 @@ demo.run([
 
 function(authSrvc, $rootScope, auth) {
   authSrvc.setIcon('http://praece.com/images/logos/praece_dark.png');
-
-  $rootScope.$on('authSuccess', function() {
-    console.log(auth.profile);
-  });
 }
 
 ]);

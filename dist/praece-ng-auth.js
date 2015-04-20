@@ -169,7 +169,8 @@ angular.module('pr.auth').controller('loginCtrl', [
   '$state',
   '$stateParams',
   '$location',
-function (authSrvc, $state, $stateParams, $location) {
+  '$injector',
+function (authSrvc, $state, $stateParams, $location, $injector) {
   var redirect = {};
   redirect.state = $stateParams.state || {};
   redirect.params = $stateParams.params || {};
@@ -178,6 +179,17 @@ function (authSrvc, $state, $stateParams, $location) {
     .then(function()  {
       // We've successfully loaded, refresh the token.
       authSrvc.refresh();
+
+      if ($injector.has('$ionicHistory')) {
+        var $ionicHistory = $injector.get('$ionicHistory');
+
+        $ionicHistory.nextViewOptions({
+          disableAnimate: false,
+          disableBack: true
+        });
+
+        $ionicHistory.clearHistory();
+      }
 
       if (redirect.state.name) {
         $state.go(redirect.state.name, redirect.params);
