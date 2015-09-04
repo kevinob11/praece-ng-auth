@@ -16,7 +16,8 @@ function ($httpProvider, $stateProvider, jwtInterceptorProvider) {
     'auth',
     'config',
     'jwtHelper',
-  function(auth, config, jwtHelper) {
+    'authSrvc',
+  function(auth, config, jwtHelper, authSrvc) {
     // Ignore loading of html templates.
     if (config.url.indexOf('.html') !== -1) return true;
 
