@@ -15,9 +15,16 @@ function ($httpProvider, $stateProvider, jwtInterceptorProvider) {
   jwtInterceptorProvider.tokenGetter = [
     'auth',
     'config',
-  function(auth, config) {
+    'jwtHelper',
+  function(auth, config, jwtHelper) {
     // Ignore loading of html templates.
     if (config.url.indexOf('.html') !== -1) return true;
+
+    if (!auth.idToken || jwtHelper.isTokenExpired(auth.idToken)) {
+      authSrvc.logout();
+      return;
+    }
+
     return auth.idToken;
   }];
 
