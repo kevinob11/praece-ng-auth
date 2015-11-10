@@ -156,10 +156,19 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location, $rootScope) {
   };
 
   /**
-   * refresh() refresh our token so it doesn't expire, this occurs on every
-   * page load.
+   * refresh() refresh our token so it doesn't expire, this function runs on every
+   * page load, tokens will only be refreshed if they are more than ten minutes old
    */
   authSrvc.refresh = function() {
+    //Issued at time is in seconds since epoch, whereas .now() provides
+    //a time in milliseconds since epoch, so we convert now to seconds
+    var now = Date.now() / 1000;
+    var iat = jwtHelper.decodeToken(auth.idToken).iat;
+    var elapsed = now - iat;
+    
+    //600 is ten minutes worth of seconds
+    if (elapsed < 600) return;
+
     auth.renewIdToken(auth.idToken)
       .then(function(token) {
         $localStorage.authToken = token;
