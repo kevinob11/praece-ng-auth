@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('pr.auth', ['ui.router', 'auth0', 'ngStorage', 'angular-jwt']);
+angular.module('pr.auth', ['ui.router', 'auth0.auth0', 'ngStorage', 'angular-jwt']);
 
 /**
- * config() registers a function to 
+ * config() registers a function to
  * jwtInterceptorProvider.tokenGetter
  * and adds jwtInterceptor as an interceptor to $httpProvider
  */
@@ -46,7 +46,7 @@ function ($httpProvider, $stateProvider, jwtInterceptorProvider) {
  * it prevents the page from loading and refreshes the token.
  * Once the token has been refreshed, it loads the page.
  * If we are not authenticated, it prevents the page from loading, and
- * asks the user to log in.   
+ * asks the user to log in.
  */
 angular.module('pr.auth').run( [
   'authSrvc',

@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('pr.auth', ['ui.router', 'auth0', 'ngStorage', 'angular-jwt']);
+angular.module('pr.auth', ['ui.router', 'auth0.auth0', 'ngStorage', 'angular-jwt']);
 
 /**
- * config() registers a function to 
+ * config() registers a function to
  * jwtInterceptorProvider.tokenGetter
  * and adds jwtInterceptor as an interceptor to $httpProvider
  */
@@ -46,7 +46,7 @@ function ($httpProvider, $stateProvider, jwtInterceptorProvider) {
  * it prevents the page from loading and refreshes the token.
  * Once the token has been refreshed, it loads the page.
  * If we are not authenticated, it prevents the page from loading, and
- * asks the user to log in.   
+ * asks the user to log in.
  */
 angular.module('pr.auth').run( [
   'authSrvc',
@@ -91,14 +91,14 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location, $rootScope) {
   };
 
   /**
-   * setIcon() set the icon for 
+   * setIcon() set the icon for
    */
   authSrvc.setIcon = function(icon) {
     settings.icon = icon;
   };
 
   /**
-   * load() loads the token from the store if the user is not authenticated, 
+   * load() loads the token from the store if the user is not authenticated,
    * and refreshes the token if it has expired.
    *
    * @return {object} promise
@@ -118,7 +118,7 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location, $rootScope) {
   };
 
   /**
-   * login() calls the auth signin method, which pops up a login box for the 
+   * login() calls the auth signin method, which pops up a login box for the
    * user. Once the user has signed in, it saves the users token and profile
    * to the store and redirects to the proper page.
    */
@@ -136,7 +136,7 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location, $rootScope) {
   };
 
   /**
-   * store() saves the data on auth into the store which allows it to be 
+   * store() saves the data on auth into the store which allows it to be
    * retreived if the user refreshes the page.
    */
   authSrvc.store = function() {
@@ -145,7 +145,7 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location, $rootScope) {
   };
 
   /**
-   * logout() logs the user out by removing their tokens and information from 
+   * logout() logs the user out by removing their tokens and information from
    * the store, and returns the user to the login() state.
    */
   authSrvc.logout = function() {
@@ -165,7 +165,7 @@ function (auth, $localStorage, jwtHelper, $state, $q, $location, $rootScope) {
     var now = Date.now() / 1000;
     var iat = jwtHelper.decodeToken(auth.idToken).iat;
     var elapsed = now - iat;
-    
+
     //600 is ten minutes worth of seconds
     if (elapsed < 600) return;
 
